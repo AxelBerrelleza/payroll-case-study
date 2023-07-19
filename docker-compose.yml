@@ -1,0 +1,13 @@
+version: '2.2'
+services:
+  php:
+    image: yiisoftware/yii2-php:8.2-apache
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    volumes:
+      - ./tests:/tests:delegated
+      - ./:/app:delegated
+      # Composer cache
+      - ~/.composer-docker/cache:/root/.composer/cache:delegated
+    ports:
+      - '8000-8010:80'
