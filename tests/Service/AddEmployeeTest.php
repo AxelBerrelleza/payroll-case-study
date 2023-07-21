@@ -27,6 +27,14 @@ class AddEmployeeTest extends KernelTestCase
         $this->assertNotNull($employee);
         $this->assertInstanceOf(Employee::class, $employee);
         $this->assertSame($fullname, $employee->getFullName());
-        $this->assertNotNull($employee->getId());
+        $newEmployeeId = $employee->getId();
+        $this->assertNotNull($newEmployeeId);
+
+        $employeeRepository = $this->entityManager->getRepository(Employee::class);
+        $employeeResponse = $employeeRepository->findOneBy(['full_name' => $fullname]);
+        $this->assertNotNull($employeeResponse);
+        $this->assertInstanceOf(Employee::class, $employee);
+
+        $this->assertSame($employee, $employeeResponse);
     }
 }
