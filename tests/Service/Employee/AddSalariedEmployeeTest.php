@@ -7,7 +7,8 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use App\Service\Employee\AddSalariedEmployee;
 use App\Entity\{
     Employee,
-    EmployeePaymentMethod
+    EmployeePaymentMethod,
+    EmployeePaymentClassification
 };
 
 class AddSalariedEmployeeTest extends KernelTestCase
@@ -28,13 +29,21 @@ class AddSalariedEmployeeTest extends KernelTestCase
         $transaction = new AddSalariedEmployee($employeeName, 20.00);
         $employee = $transaction->execute($this->entityManager);
 
-        $methodRelation = $this->entityManager->getRepository(EmployeePaymentMethod::class)
+        $persistedEmployee = $this->entityManager->getRepository(Employee::class)->find($employee->getId());
+        $this->assertNotNull($persistedEmployee);
+        $this->assertSame($employee, $persistedEmployee);
+
+        $paymentMethodRelationed = $this->entityManager->getRepository(EmployeePaymentMethod::class)
             ->findOneBy(['employee' => $employee->getId()]);
-        $this->assertNotNull($methodRelation);
-        $findedEmployee = $methodRelation->getEmployee();
+        $this->assertNotNull($paymentMethodRelationed);
+        $findedEmployee = $paymentMethodRelationed->getEmployee();
         $this->assertInstanceOf(Employee::class, $findedEmployee);
-        dump($employee);
-        dump($findedEmployee);
         $this->assertSame($employee, $findedEmployee);
+        // dump($employee);
+        // dump($findedEmployee);
+        $paymentClassRelationed = $this->entityManager->getRepository(EmployeePaymentClassification::class)
+            ->findOneBy(['employee' => $employee->getId()]);
+        $this->assertNotNull($paymentClassRelationed);
+        $this->assertSame($employee, $paymentClassRelationed->getEmployee());
     }
 }

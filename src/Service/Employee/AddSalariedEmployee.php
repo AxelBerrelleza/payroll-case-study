@@ -4,7 +4,10 @@ namespace App\Service\Employee;
 
 // use Doctrine\ORM\EntityManagerInterface;
 
-use App\Entity\PayrollPaymentMethod;
+use App\Entity\{
+    PayrollPaymentMethod,
+    PayrollPaymentClassification
+};
 
 class AddSalariedEmployee extends AddPaidEmployee
 {
@@ -30,9 +33,12 @@ class AddSalariedEmployee extends AddPaidEmployee
         return $methodRepository->find($holdMethodId);
     }
 
-    public function getPaymentClassification()
+    public function getPaymentClassification(): ?PayrollPaymentClassification
     {
-        
+        /** @var \App\Repository\PayrollPaymentClassificationRepository */
+        $paymentClassRepository = $this->entityManager->getRepository(PayrollPaymentClassification::class);
+        $salariedClassificationId = 1;
+        return $paymentClassRepository->find($salariedClassificationId);
     }
 
     public function getPaySchedule()
