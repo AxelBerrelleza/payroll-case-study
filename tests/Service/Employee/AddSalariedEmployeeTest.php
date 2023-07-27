@@ -8,7 +8,8 @@ use App\Service\Employee\AddSalariedEmployee;
 use App\Entity\{
     Employee,
     EmployeePaymentMethod,
-    EmployeePaymentClassification
+    EmployeePaymentClassification,
+    PayrollSalariedPaymentClass
 };
 
 class AddSalariedEmployeeTest extends KernelTestCase
@@ -26,7 +27,8 @@ class AddSalariedEmployeeTest extends KernelTestCase
     public function testTransaction(): void
     {
         $employeeName = 'Axel 2';
-        $transaction = new AddSalariedEmployee($employeeName, 20.00);
+        $employeeSalary = 20.00;
+        $transaction = new AddSalariedEmployee($employeeName, $employeeSalary);
         $employee = $transaction->execute($this->entityManager);
 
         $persistedEmployee = $this->entityManager->getRepository(Employee::class)->find($employee->getId());
@@ -36,14 +38,20 @@ class AddSalariedEmployeeTest extends KernelTestCase
         $paymentMethodRelationed = $this->entityManager->getRepository(EmployeePaymentMethod::class)
             ->findOneBy(['employee' => $employee->getId()]);
         $this->assertNotNull($paymentMethodRelationed);
-        $findedEmployee = $paymentMethodRelationed->getEmployee();
-        $this->assertInstanceOf(Employee::class, $findedEmployee);
-        $this->assertSame($employee, $findedEmployee);
-        // dump($employee);
-        // dump($findedEmployee);
+        $this->assertInstanceOf(EmployeePaymentMethod::class, $paymentMethodRelationed);
+        $this->assertSame($employee, $paymentMethodRelationed->getEmployee());
+        
         $paymentClassRelationed = $this->entityManager->getRepository(EmployeePaymentClassification::class)
             ->findOneBy(['employee' => $employee->getId()]);
         $this->assertNotNull($paymentClassRelationed);
+        $this->assertInstanceOf(EmployeePaymentClassification::class, $paymentClassRelationed);
         $this->assertSame($employee, $paymentClassRelationed->getEmployee());
+
+        $salariedClass = $this->entityManager->getRepository(PayrollSalariedPaymentClass::class)
+            ->findOneBy(['employee_payment_classification' => $paymentClassRelationed->getId()]);
+        $this->assertNotNull($salariedClass);
+        $this->assertInstanceOf(PayrollSalariedPaymentClass::class, $salariedClass);
+        $this->assertSame($paymentClassRelationed, $salariedClass->getEmployeePaymentClassification());
+        $this->assertEquals($employeeSalary, $salariedClass->getSalary());
     }
 }

@@ -6,14 +6,16 @@ namespace App\Service\Employee;
 
 use App\Entity\{
     PayrollPaymentMethod,
-    PayrollPaymentClassification
+    PayrollPaymentClassification,
+    PayrollSalariedPaymentClass,
+    EmployeePaymentClassification
 };
 
 class AddSalariedEmployee extends AddPaidEmployee
 {
     public function __construct(
         string $fullname,
-        float $salary,
+        protected float $salary,
         ?string $address = null
     ) {
         parent::__construct($fullname, $address);
@@ -33,12 +35,23 @@ class AddSalariedEmployee extends AddPaidEmployee
         return $methodRepository->find($holdMethodId);
     }
 
-    public function getPaymentClassification(): ?PayrollPaymentClassification
+    public function getPaymentClassification(): ?EmployeePaymentClassification
     {
         /** @var \App\Repository\PayrollPaymentClassificationRepository */
         $paymentClassRepository = $this->entityManager->getRepository(PayrollPaymentClassification::class);
         $salariedClassificationId = 1;
-        return $paymentClassRepository->find($salariedClassificationId);
+        $paymentClassification = $paymentClassRepository->find($salariedClassificationId);
+
+        $employeePaymentClass = new EmployeePaymentClassification();
+        $employeePaymentClass->setEmployee($this->employee);
+        $employeePaymentClass->setPaymentClassification($paymentClassification);
+
+        $payrollSalariedClass = new PayrollSalariedPaymentClass();
+        $payrollSalariedClass->setEmployeePaymentClassification($employeePaymentClass);
+        $payrollSalariedClass->setSalary($this->salary);
+        $this->entityManager->persist($payrollSalariedClass);
+
+        return $employeePaymentClass;
     }
 
     public function getPaySchedule()

@@ -24,7 +24,7 @@ abstract class AddPaidEmployee extends \App\Command\Employee\AddEmployee impleme
 
         $entityManager->persist($this->employee);
         $entityManager->persist($this->createEmployeePaymentMethod());
-        $entityManager->persist($this->createEmployeePaymentClassification());
+        $entityManager->persist($this->getPaymentClassification());
 
         $entityManager->flush();
         return $this->employee;
@@ -40,18 +40,10 @@ abstract class AddPaidEmployee extends \App\Command\Employee\AddEmployee impleme
         
         return $methodRecord;
     }
-
-    protected function createEmployeePaymentClassification()
-    {
-        $employeePaymentClass = new EmployeePaymentClassification();
-        $employeePaymentClass->setEmployee($this->employee);
-        $employeePaymentClass->setPaymentClassification($this->getPaymentClassification());
-        return $employeePaymentClass;
-    }
     
     abstract public function getPaymentMethod(): ?PayrollPaymentMethod;
 
-    abstract public function getPaymentClassification(): ?PayrollPaymentClassification;
+    abstract public function getPaymentClassification(): ?EmployeePaymentClassification;
 
     abstract public function getPaySchedule();
 }
