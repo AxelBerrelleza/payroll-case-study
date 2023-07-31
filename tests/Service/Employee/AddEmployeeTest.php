@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Tests\Service;
+namespace App\Tests\Service\Employee;
 
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 use App\Entity\Employee;
-use App\Command\Employee\AddEmployee;
+use App\Service\Employee\AddEmployee;
 
 class AddEmployeeTest extends KernelTestCase
 {

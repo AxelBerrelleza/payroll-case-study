@@ -12,7 +12,7 @@ use App\Entity\{
 };
 use Doctrine\ORM\EntityManagerInterface;
 
-abstract class AddPaidEmployee extends \App\Command\Employee\AddEmployee implements EntityTransaction
+abstract class AddPaidEmployee extends \App\Service\Employee\AddEmployee implements EntityTransaction
 {
     protected Employee $employee;
     protected EntityManagerInterface $entityManager;

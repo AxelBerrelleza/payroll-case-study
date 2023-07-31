@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Command\Employee;
+namespace App\Service\Employee;
 
 use App\Utils\Interfaces\EntityTransaction;
 use App\Entity\Employee;
