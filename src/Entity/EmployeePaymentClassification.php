@@ -24,6 +24,10 @@ class EmployeePaymentClassification
     #[ORM\Column]
     private \DateTimeImmutable $created_on;
 
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?PaymentDetails $payment_details = null;
+
     public function __construct()
     {
         $this->created_on = new \DateTimeImmutable();
@@ -66,6 +70,18 @@ class EmployeePaymentClassification
     public function setCreatedOn(\DateTimeImmutable $created_on): static
     {
         $this->created_on = $created_on;
+
+        return $this;
+    }
+
+    public function getPaymentDetails(): ?PaymentDetails
+    {
+        return $this->payment_details;
+    }
+
+    public function setPaymentDetails(PaymentDetails $payment_details): static
+    {
+        $this->payment_details = $payment_details;
 
         return $this;
     }

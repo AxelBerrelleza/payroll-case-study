@@ -2,14 +2,13 @@
 
 namespace App\Service\Employee;
 
-// use Doctrine\ORM\EntityManagerInterface;
-
 use App\Entity\{
     PayrollPaymentMethod,
     PayrollPaymentClassification,
-    PayrollSalariedPaymentClass,
+    PaymentDetails,
     EmployeePaymentClassification
 };
+use App\Service\Employee\SalariedClassification;
 
 class AddSalariedEmployee extends AddPaidEmployee
 {
@@ -19,7 +18,6 @@ class AddSalariedEmployee extends AddPaidEmployee
         ?string $address = null
     ) {
         parent::__construct($fullname, $address);
-
     }
 
     public function validate(): bool
@@ -42,14 +40,16 @@ class AddSalariedEmployee extends AddPaidEmployee
         $salariedClassificationId = 1;
         $paymentClassification = $paymentClassRepository->find($salariedClassificationId);
 
+        $salariedDetails = new SalariedClassification();
+        $salariedDetails->salary = $this->salary;
+        $paymentDetails = new PaymentDetails();
+        $paymentDetails->setDetails($salariedDetails);
+        $this->entityManager->persist($paymentDetails);
+        
         $employeePaymentClass = new EmployeePaymentClassification();
         $employeePaymentClass->setEmployee($this->employee);
         $employeePaymentClass->setPaymentClassification($paymentClassification);
-
-        $payrollSalariedClass = new PayrollSalariedPaymentClass();
-        $payrollSalariedClass->setEmployeePaymentClassification($employeePaymentClass);
-        $payrollSalariedClass->setSalary($this->salary);
-        $this->entityManager->persist($payrollSalariedClass);
+        $employeePaymentClass->setPaymentDetails($paymentDetails);
 
         return $employeePaymentClass;
     }
