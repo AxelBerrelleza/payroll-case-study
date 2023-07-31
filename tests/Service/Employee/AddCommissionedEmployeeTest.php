@@ -5,15 +5,15 @@ namespace App\Tests\Service\Employee;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Zenstruck\Foundry\ModelFactory;
 
-use App\Service\Employee\AddHourlyEmployee;
+use App\Service\Employee\AddCommissionedEmployee;
 use App\Entity\{
     Employee,
     EmployeePaymentMethod,
     EmployeePaymentClassification,
 };
-use App\Service\Payroll\Payment\Classification\HourlyClassification;
+use App\Service\Payroll\Payment\Classification\CommissionedClassification;
 
-class AddHourlyEmployeeTest extends KernelTestCase
+class AddCommissionedEmployeeTest extends KernelTestCase
 {
     private \Doctrine\ORM\EntityManager $entityManager;
 
@@ -28,8 +28,9 @@ class AddHourlyEmployeeTest extends KernelTestCase
     public function testTransaction(): void
     {
         $employeeName = ModelFactory::faker()->name();
-        $employeePaymentHourlyRate = ModelFactory::faker()->randomFloat();
-        $transaction = new AddHourlyEmployee($employeeName, $employeePaymentHourlyRate);
+        $employeeSalary = ModelFactory::faker()->randomFloat();
+        $employeeCommissionRate = ModelFactory::faker()->randomFloat();
+        $transaction = new AddCommissionedEmployee($employeeName, $employeeSalary, $employeeCommissionRate);
         $employee = $transaction->execute($this->entityManager);
         // dump($employee);
 
@@ -53,7 +54,8 @@ class AddHourlyEmployeeTest extends KernelTestCase
         $paymentDetails = $paymentClassRelationed->getPaymentDetails();
         $this->assertNotNull($paymentDetails);
         // dump($paymentDetails);
-        $this->assertInstanceOf(HourlyClassification::class, $paymentDetails->getDetails());
-        $this->assertEquals($employeePaymentHourlyRate, $paymentDetails->getDetails()->hourlyRate);
+        $this->assertInstanceOf(CommissionedClassification::class, $paymentDetails->getDetails());
+        $this->assertEquals($employeeSalary, $paymentDetails->getDetails()->salary);
+        $this->assertEquals($employeeCommissionRate, $paymentDetails->getDetails()->commissionRate);
     }
 }
