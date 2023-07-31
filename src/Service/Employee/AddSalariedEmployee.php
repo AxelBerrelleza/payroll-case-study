@@ -8,7 +8,7 @@ use App\Entity\{
     PaymentDetails,
     EmployeePaymentClassification
 };
-use App\Service\Employee\SalariedClassification;
+use App\Service\Payroll\Payment\Classification\SalariedClassification;
 
 class AddSalariedEmployee extends AddPaidEmployee
 {

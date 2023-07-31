@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Employee;
+namespace App\Service\Payroll\Payment\Classification;
 
 class SalariedClassification
 {

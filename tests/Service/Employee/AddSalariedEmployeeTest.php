@@ -11,7 +11,7 @@ use App\Entity\{
     EmployeePaymentMethod,
     EmployeePaymentClassification,
 };
-use App\Service\Employee\SalariedClassification;
+use App\Service\Payroll\Payment\Classification\SalariedClassification;
 
 class AddSalariedEmployeeTest extends KernelTestCase
 {
