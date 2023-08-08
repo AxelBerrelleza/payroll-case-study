@@ -8,12 +8,11 @@ use \DateTime;
 use App\Utils\Interfaces\EntityTransaction;
 use App\Entity\{
     Employee,
-    EmployeeTimeCard
+    EmployeeTimeCard,
+    EmployeePaymentClassification
 };
 use App\Repository\{
     EmployeePaymentClassificationRepository,
-    EmployeePaymentMethodRepository,
-    PaymentDetailsRepository
 };
 use App\Service\Payroll\Payment\Classification\{
     HourlyClassification,
@@ -32,8 +31,8 @@ class AddTimeCard implements EntityTransaction
 
     public function execute(EntityManagerInterface $entityManager)
     {
-        // $employeePaymentClassificationRepository = $entityManager->getRepository(EmployeePaymentMethodRepository::class);
-        // $this->assertIsHourlyEmployee($employeePaymentClassificationRepository);
+        $employeePaymentClassificationRepository = $entityManager->getRepository(EmployeePaymentClassification::class);
+        $this->assertIsHourlyEmployee($employeePaymentClassificationRepository);
         $timeCard = new EmployeeTimeCard();
         $timeCard->setEmployee($this->employee);
         $timeCard->setDate($this->date);
@@ -46,8 +45,10 @@ class AddTimeCard implements EntityTransaction
     private function assertIsHourlyEmployee(EmployeePaymentClassificationRepository $employeePaymentClassificationRepository)
     {
         $paymentClassificationRecord = $employeePaymentClassificationRepository->findOneBy(['employee' => $this->employee->getId()]);
+        if ($paymentClassificationRecord === null) 
+            throw new NotAnHourlyEmployeeException();
         $paymentDetails = $paymentClassificationRecord->getPaymentDetails();
-        if (! $paymentDetails instanceof HourlyClassification)
+        if (! $paymentDetails->getDetails() instanceof HourlyClassification)
             throw new NotAnHourlyEmployeeException();
     }
 }
