@@ -14,7 +14,7 @@ final class Version20230803044236 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'basic timecard creation';
     }
 
     public function up(Schema $schema): void
