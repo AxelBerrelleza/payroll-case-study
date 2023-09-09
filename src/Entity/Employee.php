@@ -19,6 +19,9 @@ class Employee
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $address = null;
 
+    #[ORM\OneToOne(mappedBy: 'employee', cascade: ['persist', 'remove'])]
+    private ?UnionAffiliation $unionAffiliation = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -44,6 +47,23 @@ class Employee
     public function setAddress(?string $address): static
     {
         $this->address = $address;
+
+        return $this;
+    }
+
+    public function getUnionAffiliation(): ?UnionAffiliation
+    {
+        return $this->unionAffiliation;
+    }
+
+    public function setUnionAffiliation(UnionAffiliation $unionAffiliation): static
+    {
+        // set the owning side of the relation if necessary
+        if ($unionAffiliation->getEmployee() !== $this) {
+            $unionAffiliation->setEmployee($this);
+        }
+
+        $this->unionAffiliation = $unionAffiliation;
 
         return $this;
     }

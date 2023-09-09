@@ -67,7 +67,7 @@ class AddSaleReceiptTest extends KernelTestCase
         $saleReceiptRepository = $this->entityManager->getRepository(EmployeeSaleReceipt::class);
         $createdSaleReceipt = $saleReceiptRepository->findOneBy(['employee' => $employee->getId()]);
         $this->assertNotNull($createdSaleReceipt);
-        dump($createdSaleReceipt);
+        // dump($createdSaleReceipt);
         $this->assertInstanceOf(EmployeeSaleReceipt::class, $createdSaleReceipt);
         $this->assertEquals($employee, $createdSaleReceipt->getEmployee());
         $this->assertEquals($date, $createdSaleReceipt->getDate());
